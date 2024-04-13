@@ -1,7 +1,9 @@
 \documentclass[10pt,UTF8]{book} %% ctexart
 
 \title{\textbf{计算机网络}}
-\author{钱锋\thanks{Email: strik0r.qf@gmail.com}}
+\author{钱锋\thanks{Email: strik0r.qf@gmail.com}${}^,$\thanks{
+    西北工业大学软件学院, School of Software, Northwestern Polytechnical University, 西安 710072
+}}
 
 \usepackage{ctex}
 \usepackage{graphicx}
@@ -333,7 +335,29 @@
 
 \section{网络核心}
 
-\newpage
+\subsection{复习参考题}
+
+\begin{example}
+    假定用户共享一条 $2\si{Mbps}$ 链路, 同时假定当每个用户传输时连续以
+    $1 \si{Mbps}$ 传输, 但每个用户仅传输 $20\%$ 的时间.
+    当使用电路交换时, 能够支持的最大用户数为
+    \[ \dfrac{2\si{Mbps}}{1\si{Mbps}} = 2, \]
+    这是因为电路交换为所有的呼叫保留资源 (即使它是静默的). 当使用分组交换时,
+    如果同时传输的用户数量不超过 $2$, 那么链路的传输速率将大于分组到达的速率,
+    这时链路的输出缓存队列不会增长, 但当用户数量超过 $2$ 时, 假设用户数量为 $n$,
+    那么 $n$ 个用户同时传输时链路的分组到达速率
+    \[ R_\mathrm{rcv} = n \times 1 \si{Mbps} = n\si{Mbps}, \]
+    这将会导致队列以
+    \[ R_\mathrm{rcv} - R_\mathrm{trans}
+    = (n-2) \si{Mbps} \]
+    的速率增长. 根据二项分布可知, $k$ 个用户同时传输的概率为
+    \[ P(\mathrm{activeUserNum} = k)
+    = \mathrm{C}_n^k p^k (1-p)^{n-k}, \]
+    其中 $p=0.2$ 为某个用户正在传输的概率. 具体而言, 如果有 $3$ 个用户的话,
+    $3$ 个用户同时传输的概率仅为 $0.008$, 这就是说, 如果采用分组交换,
+    那么这个线路有 $99.2\%$ 的时间都能很好的服务于 $3$ 个用户.
+\end{example}
+
 \section{分组交换网络中的时延、丢包和吞吐量}
 
 \subsection{分组交换网络中单个节点的时延}
@@ -464,12 +488,18 @@ $d_\mathrm{trans}$. 一般地, 速率为 $R \, \si{Mbps}$ 传输长度为
 $L \, \si{Mb}$ 的分组所需要的时间
 \[ d_\mathrm{trans} = \dfrac{L}{R}. \]
 在这里请一定要带着单位去计算, 注意 $\si{b}$ 和 $\si{B}$ 的区别, 此外,
-在考虑数据传输的效率时, 我们一般是以 $10^3$ 作为基准来划定计数单位的, 而不是
+在考虑数据传输的效率时, 我们一般是以 $10^3$ 作为基准来划定计数单位的\footnote{
+    我们通常用 K, M, G, T 等符号来代表 $10^3$, $10^6$, $10^9$, $10^{12}, \cdots,$
+    用 Ki, Mi, Gi, Ti 等符号来表示 $2^{10}, 2^{20}, 2^{30}, 2^{40}, \cdots$.
+    这就是说, $1\si{KB} = 1000\si{B}$ 而 $1\si{KiB} = 1024\si{B}$.
+}, 而不是
 $2^{10}$. 这意味着, $1 \si{K} = 10^3$, $1 \si{M} = 10^6$,
 $1 \si{T} = 10^9$, $1 \si{P} = 10^{12}$.
 此外, 我们一般会把分组的长度 (即分组的数据量) 说成是分组的大小,
 在本书中我们它们指的是一个意思, 都是在说这个分组里含有多少个 bit, 即含有多少个
 二进制位.
+
+
 
 \subsubsection{传播时延}
 
@@ -693,6 +723,16 @@ $d_\mathrm{prop}$.
 $d_\mathrm{trans, i}$, 第 $i-1$ 个节点到第 $i$ 个节点的通信链路上的
 传播时延为 $d_\mathrm{prop, (i-1,i)}$. 其中 $d_\mathrm{trans, i} =
 L_k/R_i$, $R_i$ 表示第 $i$ 个节点将数据推入通往下一个节点的通信链路的传输速率.
+
+\begin{example}
+    假定在发送主机 $A$ 和接受主机 $B$ 间只有一台分组交换机 $S$, 
+    发送主机和交换机间以及交换机
+    和接受主机间的传输速率分别是 $R_1$ 和 $R_2$, 假设该交换机使用存储转发分组
+    交换方式, 如果忽略排队时延、传播时延和处理时延 (这就是说, 我们只考虑传输时延),
+    那么发送一个长度为 $L$ 的分组的
+    端到端总时延 \[ d_\mathrm{end-end} = d_\mathrm{trans}(A, S)
+    + d_\mathrm{trans}(S, A) = \dfrac{L}{R_1} + \dfrac{L}{R_2}. \]
+\end{example}
 
 \subsection{计算机网络中的吞吐量}
 
